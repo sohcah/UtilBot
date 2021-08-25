@@ -1,0 +1,22 @@
+{
+  "name": "UtilBot",
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "build": "tsc",
+    "docker-build": "tsc && docker build . -t megalodon",
+    "start": "node lib/index.js",
+    "dev": "tsc && cross-env UTILBOT_CONFIG=./config.json node lib/index.js"
+  },
+  "dependencies": {
+    "discord.js": "^13.1.0",
+    "heic-convert": "^1.2.4",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.12",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
+    "typescript": "^4.3.5"
+  }
+}

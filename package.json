@@ -1,10 +1,10 @@
 {
-  "name": "UtilBot",
+  "name": "utilbot",
   "version": "1.0.0",
   "scripts": {
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "build": "tsc",
-    "docker-build": "tsc && docker build . -t megalodon",
+    "docker-build": "tsc && docker build . -t utilbot",
     "start": "node lib/index.js",
     "dev": "tsc && cross-env UTILBOT_CONFIG=./config.json node lib/index.js"
   },

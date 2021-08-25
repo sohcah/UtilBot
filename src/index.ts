@@ -39,12 +39,9 @@ async function handleHEIC(message: Message) {
 }
 
 client.on("messageCreate", message => {
-    console.log(message.content);
     handleHEIC(message);
 })
 
 client.login(config.token);
 
-client.on("ready", () => console.log("Ready"));
-
-console.log(config.token);
+client.on("ready", () => console.log("UtilBot Ready"));

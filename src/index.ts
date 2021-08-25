@@ -20,6 +20,7 @@ const client = new Client({
 async function handleHEIC(message: Message) {
     const heic = message.attachments.find(i => i.attachment.toString().toLowerCase().endsWith(".heic"));
     if(heic) {
+        console.log(`Converting HEIC to JPEG for ${heic.url.toString()}`);
         const response = await fetch(heic.url.toString());
         const buffer = await response.buffer();
         const outputBuffer = await convert({
@@ -39,6 +40,7 @@ async function handleHEIC(message: Message) {
 }
 
 client.on("messageCreate", message => {
+    if (message.author.bot) return;
     handleHEIC(message);
 })
 

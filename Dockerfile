@@ -2,7 +2,7 @@ FROM node:16-alpine3.17
 
 WORKDIR /usr/src/UtilBot
 
-RUN apk add build-base libheif-dev libheif vips-dev vips
+RUN apk add build-base libde265-dev libde265 libheif-dev libheif vips-dev vips
 
 COPY package*.json ./
 COPY yarn.lock ./

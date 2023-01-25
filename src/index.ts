@@ -8,9 +8,8 @@ import {
   TextChannel,
 } from "discord.js";
 import fetch from "node-fetch";
-// @ts-ignore
-import convert from "heic-convert";
 import * as fs from "fs";
+import sharp from "sharp";
 
 const config = JSON.parse(
   process.env.CONFIG ?? fs.readFileSync(process.env.UTILBOT_CONFIG ?? "/utilbotconfig.json", "utf8")
@@ -35,11 +34,7 @@ async function handleHEIC(message: Message) {
     console.log(`Converting HEIC to JPEG for ${heic.url.toString()}`);
     const response = await fetch(heic.url.toString());
     const buffer = await response.buffer();
-    const outputBuffer = await convert({
-      buffer: buffer,
-      format: "JPEG",
-      quality: 0.8,
-    });
+    const outputBuffer = await sharp(buffer).jpeg().toBuffer();
     try {
       await message.channel.send({
         files: [

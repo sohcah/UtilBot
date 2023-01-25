@@ -38,10 +38,6 @@ async function handleImageConversion(message: Message) {
   if (widthMatch?.[1]) {
     options.width = parseInt(widthMatch[1]);
   }
-  const fitMatch = message.content.match(/\[fit:(\w+)]/);
-  if (fitMatch?.[1]) {
-    options.fit = fitMatch[1] as any;
-  }
   const automaticallyConvertableImage = message.attachments.find(i =>
       [".heic", ".pdf", ".svg"].some(e => i.attachment.toString().toLowerCase().endsWith(e))
   );
@@ -55,6 +51,13 @@ async function handleImageConversion(message: Message) {
     const buffer = await response.buffer();
     let image = sharp(buffer);
     if (Object.keys(options).length > 0) {
+      const fitMatch = message.content.match(/\[fit:(\w+)]/);
+      if (fitMatch?.[1]) {
+        options.fit = fitMatch[1] as any;
+      }
+      if (message.content.match(/\[pixel]/)) {
+        options.kernel = "nearest";
+      }
       image = image.resize(options);
     }
     const outputBuffer = await image.png().toBuffer();

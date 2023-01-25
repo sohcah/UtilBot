@@ -7,7 +7,7 @@ RUN apk add build-base libheif vips-dev vips
 COPY package*.json ./
 COPY yarn.lock ./
 
-RUN yarn install
+RUN yarn install --build-from-source --verbose
 
 COPY . .
 

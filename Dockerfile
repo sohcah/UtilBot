@@ -13,7 +13,6 @@ RUN set -x -o pipefail \
     libjpeg-turbo libexif lcms2 fftw giflib libpng \
     libwebp orc tiff poppler-glib librsvg libgsf openexr \
     libheif libimagequant pango \
-    && apk add --virtual vips-dependencies \
     zlib-dev libxml2-dev glib-dev gobject-introspection-dev \
     libjpeg-turbo-dev libexif-dev lcms2-dev fftw-dev giflib-dev libpng-dev \
     libwebp-dev orc-dev tiff-dev poppler-dev librsvg-dev libgsf-dev openexr-dev \
@@ -27,7 +26,6 @@ RUN set -x -o pipefail \
     && make -s install-strip \
     && cd $OLDPWD \
     && rm -rf /tmp/vips-${VIPS_VERSION} \
-    && apk del --purge vips-dependencies \
     && rm -rf /var/cache/apk/*
 
 COPY package*.json ./

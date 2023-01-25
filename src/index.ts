@@ -8,8 +8,6 @@ import {
   TextChannel,
 } from "discord.js";
 import fetch from "node-fetch";
-//@ts-ignore
-import convert from "heic-convert";
 import * as fs from "fs";
 import sharp from "sharp";
 
@@ -40,16 +38,7 @@ async function handleHEIC(message: Message) {
     console.log(`Converting HEIC to JPEG for ${heic.url.toString()}`);
     const response = await fetch(heic.url.toString());
     const buffer = await response.buffer();
-    let outputBuffer;
-    if(message.content.includes("<sharp>")) {
-      outputBuffer = await sharp(buffer).jpeg().toBuffer();
-    } else {
-      outputBuffer = await convert({
-        buffer: buffer,
-        format: "JPEG",
-        quality: 0.8,
-      });
-    }
+    const outputBuffer = await sharp(buffer).png().toBuffer();
     try {
       await message.channel.send({
         files: [
@@ -57,7 +46,7 @@ async function handleHEIC(message: Message) {
             attachment: outputBuffer,
             name:
               heic.url.toString().split("/").reverse()[0].split(".").slice(0, -1).join(".") +
-              ".jpg",
+              ".png",
           },
         ],
       });

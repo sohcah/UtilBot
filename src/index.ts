@@ -29,27 +29,31 @@ const client = new Client({
 });
 
 async function handleImageConversion(message: Message) {
-  const convertableImage = message.attachments.find(i =>
-    [".heic", ".pdf", ".svg"].some(e => i.attachment.toString().toLowerCase().endsWith(e))
+  const options: ResizeOptions = {};
+  const heightMatch = message.content.match(/\[height:(\d+)]/);
+  if (heightMatch?.[1]) {
+    options.height = parseInt(heightMatch[1]);
+  }
+  const widthMatch = message.content.match(/\[width:(\d+)]/);
+  if (widthMatch?.[1]) {
+    options.width = parseInt(widthMatch[1]);
+  }
+  const fitMatch = message.content.match(/\[fit:(\w+)]/);
+  if (fitMatch?.[1]) {
+    options.fit = fitMatch[1] as any;
+  }
+  const automaticallyConvertableImage = message.attachments.find(i =>
+      [".heic", ".pdf", ".svg"].some(e => i.attachment.toString().toLowerCase().endsWith(e))
   );
-  if (convertableImage) {
+  const anyConvertableImage = message.attachments.find(i =>
+      [".heic", ".pdf", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"].some(e => i.attachment.toString().toLowerCase().endsWith(e))
+  );
+  if (automaticallyConvertableImage || (Object.keys(options).length > 0 && anyConvertableImage)) {
+    const convertableImage = automaticallyConvertableImage ?? anyConvertableImage!;
     console.log(`Converting file to JPEG for ${convertableImage.url.toString()}`);
     const response = await fetch(convertableImage.url.toString());
     const buffer = await response.buffer();
     let image = sharp(buffer);
-    const options: ResizeOptions = {};
-    const heightMatch = message.content.match(/\[height:(\d+)]/);
-    if (heightMatch?.[1]) {
-        options.height = parseInt(heightMatch[1]);
-    }
-    const widthMatch = message.content.match(/\[width:(\d+)]/);
-    if (widthMatch?.[1]) {
-        options.width = parseInt(widthMatch[1]);
-    }
-    const fitMatch = message.content.match(/\[fit:(\w+)]/);
-    if (fitMatch?.[1]) {
-        options.fit = fitMatch[1] as any;
-    }
     if (Object.keys(options).length > 0) {
       image = image.resize(options);
     }

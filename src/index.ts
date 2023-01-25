@@ -9,15 +9,13 @@ import {
 } from "discord.js";
 import fetch from "node-fetch";
 import * as fs from "fs";
-import sharp from "sharp";
+import sharp, {ResizeOptions} from "sharp";
 
 const config = JSON.parse(
   process.env.CONFIG ?? fs.readFileSync(process.env.UTILBOT_CONFIG ?? "/utilbotconfig.json", "utf8")
 );
 
 console.log("format", sharp.format);
-console.log("vendor", sharp.vendor)
-console.log("versions", sharp.versions)
 
 const client = new Client({
   allowedMentions: {
@@ -30,22 +28,39 @@ const client = new Client({
   intents: ["GUILD_MESSAGES", "GUILD_MESSAGE_REACTIONS", "GUILDS", "GUILD_EMOJIS_AND_STICKERS"],
 });
 
-async function handleHEIC(message: Message) {
-  const heic = message.attachments.find(i =>
-    i.attachment.toString().toLowerCase().endsWith(".heic")
+async function handleImageConversion(message: Message) {
+  const convertableImage = message.attachments.find(i =>
+    [".heic", ".pdf", ".svg"].some(e => i.attachment.toString().toLowerCase().endsWith(e))
   );
-  if (heic) {
-    console.log(`Converting HEIC to JPEG for ${heic.url.toString()}`);
-    const response = await fetch(heic.url.toString());
+  if (convertableImage) {
+    console.log(`Converting file to JPEG for ${convertableImage.url.toString()}`);
+    const response = await fetch(convertableImage.url.toString());
     const buffer = await response.buffer();
-    const outputBuffer = await sharp(buffer).png().toBuffer();
+    let image = sharp(buffer);
+    const options: ResizeOptions = {};
+    const heightMatch = message.content.match(/\[height:(\d+)]/);
+    if (heightMatch?.[1]) {
+        options.height = parseInt(heightMatch[1]);
+    }
+    const widthMatch = message.content.match(/\[width:(\d+)]/);
+    if (widthMatch?.[1]) {
+        options.width = parseInt(widthMatch[1]);
+    }
+    const fitMatch = message.content.match(/\[fit:(\w+)]/);
+    if (fitMatch?.[1]) {
+        options.fit = fitMatch[1] as any;
+    }
+    if (Object.keys(options).length > 0) {
+      image = image.resize(options);
+    }
+    const outputBuffer = await image.png().toBuffer();
     try {
       await message.channel.send({
         files: [
           {
             attachment: outputBuffer,
             name:
-              heic.url.toString().split("/").reverse()[0].split(".").slice(0, -1).join(".") +
+              convertableImage.url.toString().split("/").reverse()[0].split(".").slice(0, -1).join(".") +
               ".png",
           },
         ],
@@ -97,7 +112,7 @@ async function handleFollowMerge(message: Message) {
 client.on("messageCreate", message => {
   handleFollowMerge(message);
   if (message.author.bot) return;
-  handleHEIC(message);
+  handleImageConversion(message);
 });
 
 client.login(config.token);

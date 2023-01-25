@@ -13,7 +13,7 @@ import convert from "heic-convert";
 import * as fs from "fs";
 
 const config = JSON.parse(
-  fs.readFileSync(process.env.UTILBOT_CONFIG ?? "/utilbotconfig.json", "utf8")
+  process.env.CONFIG ?? fs.readFileSync(process.env.UTILBOT_CONFIG ?? "/utilbotconfig.json", "utf8")
 );
 
 const client = new Client({

@@ -15,6 +15,10 @@ const config = JSON.parse(
   process.env.CONFIG ?? fs.readFileSync(process.env.UTILBOT_CONFIG ?? "/utilbotconfig.json", "utf8")
 );
 
+console.log("format", sharp.format);
+console.log("vendor", sharp.vendor)
+console.log("versions", sharp.versions)
+
 const client = new Client({
   allowedMentions: {
     parse: [],

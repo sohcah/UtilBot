@@ -9,7 +9,7 @@ RUN set -x -o pipefail \
     && apk update \
     && apk upgrade \
     && apk add \
-    build-base zlib libxml2 glib gobject-introspection \
+    build-base python3 zlib libxml2 glib gobject-introspection \
     libjpeg-turbo libexif lcms2 fftw giflib libpng \
     libwebp orc tiff poppler-glib librsvg libgsf openexr \
     libheif libimagequant pango \

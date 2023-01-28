@@ -1,11 +1,12 @@
 import {
   Client,
   Message,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
   MessageFlags,
   TextChannel,
+  ButtonStyle, IntentsBitField,
 } from "discord.js";
 import fetch from "node-fetch";
 import * as fs from "fs";
@@ -24,8 +25,12 @@ const client = new Client({
     roles: [],
     repliedUser: false,
   },
-  messageCacheLifetime: 1,
-  intents: ["GUILD_MESSAGES", "GUILD_MESSAGE_REACTIONS", "GUILDS", "GUILD_EMOJIS_AND_STICKERS"],
+  intents: [
+    IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.GuildMessageReactions,
+    IntentsBitField.Flags.Guilds,
+    IntentsBitField.Flags.GuildEmojisAndStickers,
+  ],
 });
 
 async function handleImageConversion(message: Message) {
@@ -77,28 +82,33 @@ async function handleImageConversion(message: Message) {
 }
 
 async function handleFollowMerge(message: Message) {
-  if (message.flags.has(MessageFlags.FLAGS.IS_CROSSPOST)) {
+  if (message.flags.has(MessageFlags.Crossposted)) {
     const followMerge = (message.channel as TextChannel).topic?.match(/<FollowMerge:(\d+)>/);
     if (followMerge?.[1]) {
       const channel = message.guild?.channels.resolve(followMerge[1]) as TextChannel | undefined;
       if (channel) {
         channel.send({
           embeds: [
-            new MessageEmbed()
+            new EmbedBuilder()
               .setDescription(message.content)
-              .setAuthor(message.author.username, message.author.displayAvatarURL())
+              .setAuthor({
+                name: message.author.username,
+                iconURL: message.author.displayAvatarURL()
+              })
               .setThumbnail(message.author.displayAvatarURL())
               .setTimestamp(message.createdTimestamp)
-              .setFooter(`UtilBot FollowMerge`),
+              .setFooter({
+                text: `UtilBot FollowMerge`
+              }),
             ...message.embeds,
           ],
           stickers: [...message.stickers.values()],
           files: [...message.attachments.values()],
           components: [
-            new MessageActionRow().addComponents(
-              new MessageButton()
+            new ActionRowBuilder<ButtonBuilder>().addComponents(
+              new ButtonBuilder()
                 .setLabel("Original Message")
-                .setStyle("LINK")
+                .setStyle(ButtonStyle.Link)
                 .setURL(
                   `https://discord.com/channels/${message.reference?.guildId}/${message.reference?.channelId}/${message.reference?.messageId}`
                 )

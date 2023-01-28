@@ -9,7 +9,7 @@
     "dev": "tsc && cross-env UTILBOT_CONFIG=./config.json node lib/index.js"
   },
   "dependencies": {
-    "discord.js": "^13.1.0",
+    "discord.js": "^14.7.1",
     "node-fetch": "^2.6.8",
     "sharp": "^0.31.3"
   },

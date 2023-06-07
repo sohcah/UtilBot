@@ -27,6 +27,7 @@ const client = new Client({
   },
   intents: [
     IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.MessageContent,
     IntentsBitField.Flags.GuildMessageReactions,
     IntentsBitField.Flags.Guilds,
     IntentsBitField.Flags.GuildEmojisAndStickers,

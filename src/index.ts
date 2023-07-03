@@ -45,10 +45,10 @@ async function handleImageConversion(message: Message) {
     options.width = parseInt(widthMatch[1]);
   }
   const automaticallyConvertableImage = message.attachments.find(i =>
-      [".heic", ".pdf", ".svg"].some(e => i.attachment.toString().toLowerCase().endsWith(e))
+      [".heic", ".pdf", ".svg"].some(e => i.name.toLowerCase().endsWith(e))
   );
   const anyConvertableImage = message.attachments.find(i =>
-      [".heic", ".pdf", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"].some(e => i.attachment.toString().toLowerCase().endsWith(e))
+      [".heic", ".pdf", ".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"].some(e => i.name.toLowerCase().endsWith(e))
   );
   if (automaticallyConvertableImage || (Object.keys(options).length > 0 && anyConvertableImage)) {
     const convertableImage = automaticallyConvertableImage ?? anyConvertableImage!;

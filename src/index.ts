@@ -83,7 +83,7 @@ async function handleImageConversion(message: Message) {
 }
 
 async function handleFollowMerge(message: Message) {
-  if (message.flags.has(MessageFlags.Crossposted)) {
+  if (message.flags.has(MessageFlags.IsCrosspost)) {
     const followMerge = (message.channel as TextChannel).topic?.match(/<FollowMerge:(\d+)>/);
     if (followMerge?.[1]) {
       const channel = message.guild?.channels.resolve(followMerge[1]) as TextChannel | undefined;
